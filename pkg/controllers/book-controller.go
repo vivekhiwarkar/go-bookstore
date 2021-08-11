@@ -7,81 +7,80 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/gorrila/mux"
 	"github.com/vivekhiwarkar/go-bookstore/pkg/models"
 	"github.com/vivekhiwarkar/go-bookstore/pkg/utils"
 )
 
 var NewBook models.Book
 
-func GetBook(w http.ResponseWriter, r *http.Request){
+func GetBook(w http.ResponseWriter, r *http.Request) {
 	newBooks := models.GetAllBooks()
-	res, _:=json.Marshal(newBooks)
-	w.Header().Set("Content-Type","pkglication/json")
+	res, _ := json.Marshal(newBooks)
+	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
-func GetBookById(w http.ResponseWriter, r *http.Request){
+func GetBookById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	bookId := vars["bookId"]
-	ID, err:= strconv.ParseInt(bookId,0,0)
-	if err!=nil{
+	ID, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
 		fmt.Println("error while parsing")
 	}
-	bookDetails, _ :=models.GetBookById(ID)
-	res , _ := json.Marshal(bookDetails)
-	w.Header().Set("Content-Type","pkglication/json")
+	bookDetails, _ := models.GetBookById(ID)
+	res, _ := json.Marshal(bookDetails)
+	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader((http.StatusOK))
 	w.Write(res)
 }
 
-func CreateBook(w http.ResponseWriter , r *http.Request){
+func CreateBook(w http.ResponseWriter, r *http.Request) {
 	CreateBook := &models.Book{}
 	utils.ParseBody(r, CreateBook)
-	b:= CreateBook.CreateBook()
+	b := CreateBook.CreateBook()
 	res, _ := json.Marshal(b)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
-func DeleteBook(w http.ResponseWriter, r *http.Request){
+func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	bookId := vars["bookId"]
-	ID, err := strconv.ParseInt(bookId,0,0)
-	if err !=nil{
+	ID, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
 		fmt.Println("error while parsing")
 	}
 	book := models.DeleteBook(ID)
 	res, _ := json.Marshal(book)
-	w.Header().Set("Content-Type","pkglication/json")
+	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
-func UpdateBook(w http.ResponseWriter, r *http.Request){
+func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	var UpdateBook = &models.Book{}
-	utils.ParseBody(r.UpdateBook)
+	utils.ParseBody(r, UpdateBook)
 	vars := mux.Vars(r)
-	bookId : vars["bookId"]
-	ID, err : =strconv.ParseInt(bookId,0,0)
-	if err!=nil{
+	bookId := vars["bookId"]
+	ID, err := strconv.ParseInt(bookId, 0, 0)
+	if err != nil {
 		fmt.Println("Error while parsing")
 	}
-	bookDetails, db :=models.GetBookById(ID)
-	if UpdateBook.Name != ""{
+	bookDetails, db := models.GetBookById(ID)
+	if UpdateBook.Name != "" {
 		bookDetails.Name = UpdateBook.Name
 	}
-	if UpdateBook.Author != ""{
+	if UpdateBook.Author != "" {
 		bookDetails.Name = UpdateBook.Author
 	}
-	if UpdateBook.Publication != ""{
+	if UpdateBook.Publication != "" {
 		bookDetails.Name = UpdateBook.Publication
 	}
 
 	db.Save(&bookDetails)
 	res, _ := json.Marshal(bookDetails)
-	w.Header().Set("Content-Type","pkglication/json")
+	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
